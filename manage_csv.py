@@ -58,7 +58,6 @@ def select_table(df, df_name:str, by_name=re.compile(r'.*8.*')):
     else: pass
 
 
-
 @dataframe_loop_decorator
 def select_column(df, df_name):
     """
@@ -109,6 +108,41 @@ def add_lc_endemics_column(df, df_name, classe_dict):
     
     return df
 
+@dataframe_loop_decorator
+def add_status(df: pd.DataFrame, df_name: str):
+    """
+    Adds a 'Status' column to the DataFrame by extracting the text within parentheses from the DataFrame's name.
+
+    Parameters:
+    df (pd.DataFrame): The DataFrame to modify.
+    df_name (str): The name of the DataFrame.
+
+    Returns:
+    pd.DataFrame: The DataFrame with the 'Status' column added.
+    """
+    pattern = re.compile(r'\(([^)]+)\)')
+    match = pattern.search(df_name)
+
+    if match:
+        status = match.group(1)
+        df['Status'] = status
+    else:
+        print(f"No text within parentheses found in the DataFrame name: {df_name}")
+    
+    return df
+
+def concat_all_dataframes(dfs: dict):
+    """
+    Concatenates all DataFrames from a dictionary into a single DataFrame.
+
+    Parameters:
+    dfs (dict): A dictionary of DataFrames, where the keys are the names of the DataFrames.
+
+    Returns:
+    pd.DataFrame: A single DataFrame containing all rows from the original DataFrames.
+    """
+    concatenated_df = pd.concat(dfs.values(), ignore_index=True)
+    return concatenated_df
 
 @dataframe_loop_decorator
 def actualize_csv(df:pd.DataFrame, df_name, folder='Datas'):
@@ -116,14 +150,23 @@ def actualize_csv(df:pd.DataFrame, df_name, folder='Datas'):
     df.to_csv(file_path, index=False)
     return df
 
-
+# load all dataframes
 folder = "Datas"
 dfs = load_csv_dataframes(folder)
-df_test = select_table(dfs, by_name=re.compile(r'.*8.*'))
-animals_classes = select_column(dfs=df_test)
-dfs_new = add_lc_endemics_column(dfs=df_test, classe_dict=animals_classes)
 
-actualize_csv(dfs=dfs_new)
+# add LC col into all tables "8"
+dfs_8 = select_table(dfs, by_name=re.compile(r'.*8.*'))
+animals_classes = select_column(dfs=dfs_8)
+dfs_8 = add_lc_endemics_column(dfs=dfs_8, classe_dict=animals_classes)
+actualize_csv(dfs=dfs_8)
+
+# merge all tables "2" and create new column Status = (CR, EN, VU)
+dfs_2 = select_table(dfs, by_name=re.compile(r'.*2.*'))
+dfs_2 = add_status(dfs_2)
+actualize_csv(dfs=dfs_2)
+Table_time = concat_all_dataframes(dfs_2)
+Table_time.to_csv('Datas/Table_time.csv')
+
 
 
 
