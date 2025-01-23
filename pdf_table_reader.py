@@ -66,7 +66,9 @@ def process_pdf(pdf_file):
                 csv_filename = f"{pdf_name_cleaned}_{header}.csv"
             else:
                 csv_filename = f"{pdf_name_cleaned}_{idx}.csv"
-            df.to_csv(csv_filename, index=False)
+
+            csv_path = os.path.join('Datas', csv_filename)
+            df.to_csv(csv_path, index=False)
             print(f"Tableau {idx} sauvegardé dans : {csv_filename}")
     else:
         print(f"Aucun tableau valide trouvé dans {pdf_file}.")
@@ -79,5 +81,5 @@ def process_directory(directory):
 
 # Exemple d'utilisation
 if __name__ == "__main__":
-    pdf_directory = "./"  # Remplacez par le chemin de votre répertoire PDF
+    pdf_directory = "./test_ocr"  # Remplacez par le chemin de votre répertoire PDF
     process_directory(pdf_directory)
