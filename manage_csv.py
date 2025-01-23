@@ -166,7 +166,3 @@ dfs_2 = add_status(dfs_2)
 actualize_csv(dfs=dfs_2)
 Table_time = concat_all_dataframes(dfs_2)
 Table_time.to_csv('Datas/Table_time.csv')
-
-
-
-
