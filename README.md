@@ -18,7 +18,3 @@ Ensure all dependencies are installed before executing the script.
 
 - Python 3.x  
 - Required libraries (listed in `requirements.txt` or as necessary for your project)  
-
-## License  
-
-Feel free to customize or expand this README as needed! Let me know if you'd like to add anything else.
