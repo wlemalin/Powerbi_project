@@ -12,6 +12,7 @@ os.makedirs(download_dir, exist_ok=True)
 
 # Configurer le WebDriver pour télécharger dans le dossier "Datas"
 chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--headless")
 prefs = {
     "download.default_directory": download_dir,  # Dossier de téléchargement
     "download.prompt_for_download": False,  # Ne pas demander confirmation

@@ -80,6 +80,21 @@ def select_column(df:pd.DataFrame, df_name):
     
     return list(matches)
 
+@dataframe_loop_decorator
+def rename_columns(df: pd.DataFrame, df_name: str):
+    """
+    Renames the columns of a DataFrame by replacing newline characters (`\n`) with spaces.
+
+    Parameters:
+    df (pd.DataFrame): The DataFrame whose columns need to be renamed.
+    df_name (str): The name of the DataFrame (unused in this function).
+
+    Returns:
+    pd.DataFrame: The DataFrame with renamed columns.
+    """
+    df.columns = df.columns.str.replace('\n', ' ')
+    return df
+
 
 @dataframe_loop_decorator
 def add_lc_endemics_column(df:pd.DataFrame, df_name, classe_dict):
@@ -158,13 +173,20 @@ if __name__ == "__main__":
 
     # add LC col into all tables "8"
     dfs_8 = select_table(dfs, by_name=re.compile(r'.*8.*'))
+    dfs_8 = rename_columns(dfs=dfs_8)
     animals_classes = select_column(dfs=dfs_8)
     dfs_8 = add_lc_endemics_column(dfs=dfs_8, classe_dict=animals_classes)
     actualize_csv(dfs=dfs_8)
 
     # merge all tables "2" and create new column Status = (CR, EN, VU)
     dfs_2 = select_table(dfs, by_name=re.compile(r'.*2.*'))
+    dfs_2 = rename_columns(dfs=dfs_2)
     dfs_2 = add_status(dfs_2)
     actualize_csv(dfs=dfs_2)
     Table_time = concat_all_dataframes(dfs_2)
     Table_time.to_csv('Datas/Table_time.csv')
+
+    # rename columns for all tables "7"
+    dfs_7 = select_table(dfs, by_name=re.compile(r'.*7.*'))
+    dfs_7 = rename_columns(dfs=dfs_7)
+    actualize_csv(dfs=dfs_7)
