@@ -2,7 +2,7 @@
 
 # Data Collection and Processing Script  
 
-This repository contains a script to collect and process data.  
+This repository contains a script to collect and process data related to species classifications from the IUCN Red List, focusing on categories such as Critically Endangered, Endangered, and Extinct. 
 
 ## Usage  
 
