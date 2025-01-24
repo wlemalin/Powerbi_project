@@ -9,7 +9,7 @@ def is_additional_header(row):
 
 def process_pdf(pdf_file):
     """Extrait les tableaux d'un fichier PDF et les sauvegarde au format CSV."""
-    pdf_name_cleaned = '_'.join(pdf_file.split("_")[2:]).split(".")[0]
+    pdf_name_cleaned = '_'.join(pdf_file.split("_")[3:]).split(".")[0]
 
     # Liste pour stocker les DataFrames de chaque tableau avec leur en-tête
     dataframes = []
@@ -35,10 +35,11 @@ def process_pdf(pdf_file):
                         table = table[1:]  # Supprime l'en-tête supplémentaire
                         df = pd.DataFrame(table[1:], columns=table[0])
                         # Concaténer avec le dernier DataFrame de la liste
-                        last_table, last_header = dataframes[-1]
-                        concat_df = pd.concat([last_table, df], ignore_index=True)
-                        dataframes.pop()
-                        dataframes.append([concat_df, header])
+                        if dataframes:
+                            last_table, last_header = dataframes[-1]
+                            concat_df = pd.concat([last_table, df], ignore_index=True)
+                            dataframes.pop()
+                            dataframes.append([concat_df, header])
                         continue  # Passer au tableau suivant
                     last_header = header
                     table = table[1:]  # Supprime l'en-tête supplémentaire
@@ -66,9 +67,7 @@ def process_pdf(pdf_file):
                 csv_filename = f"{pdf_name_cleaned}_{header}.csv"
             else:
                 csv_filename = f"{pdf_name_cleaned}_{idx}.csv"
-
-            csv_path = os.path.join('Datas', csv_filename)
-            df.to_csv(csv_path, index=False)
+            df.to_csv(csv_filename, index=False)
             print(f"Tableau {idx} sauvegardé dans : {csv_filename}")
     else:
         print(f"Aucun tableau valide trouvé dans {pdf_file}.")
@@ -81,5 +80,5 @@ def process_directory(directory):
 
 # Exemple d'utilisation
 if __name__ == "__main__":
-    pdf_directory = "./test_ocr"  # Remplacez par le chemin de votre répertoire PDF
+    pdf_directory = "./iucn_pdfs/"  # Remplacez par le chemin de votre répertoire PDF
     process_directory(pdf_directory)
